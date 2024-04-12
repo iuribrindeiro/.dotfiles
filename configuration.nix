@@ -77,7 +77,9 @@
     git
     kitty
     curl
-    waybar
+    spice-vdagent
+    firefox
+    gh
   ];
 
   environment.variables.EDITOR = "nvim";
