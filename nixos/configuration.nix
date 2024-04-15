@@ -7,14 +7,17 @@
 {
   imports =
     [ # Include the results of the hardware scan.
+      <home-manager/nixos>
       ./hardware-configuration.nix
-      ./hyprland.nix
+      ./display-manager.nix
+      ./sound.nix
     ];
 
   # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
-  boot.loader.grub.useOSProber = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  security.polkit.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -46,11 +49,6 @@
     LC_TIME = "pt_BR.UTF-8";
   };
 
-  # Configure keymap in X11
-  services.xserver = {
-    layout = "us";
-    xkbVariant = "";
-  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.iuri = {
@@ -58,12 +56,6 @@
     description = "Iuri Brindeiro";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
-  };
-
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
   };
 
   # Allow unfree packages
@@ -77,9 +69,11 @@
     git
     kitty
     curl
-    spice-vdagent
     firefox
     gh
+    home-manager
+    libsForQt5.qt5.qtquickcontrols2   
+    libsForQt5.qt5.qtgraphicaleffects
   ];
 
   environment.variables.EDITOR = "nvim";
@@ -110,5 +104,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "23.11"; # Did you read the comment?
-
 }
