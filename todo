@@ -1,0 +1,5 @@
+1. Custom rofi theme
+2. Custom waybar theme
+3. Better firefox fonts
+4. Find a way to automatically commit/apply changes to nix+home-manager when commiting or applying changes (maybe git hooks?)
+
