@@ -1,59 +1,60 @@
 {pkgs, config, ...}: 
 {
-  services.xserver = {
-    enable = true;
-    videoDrivers = ["nvidia"];
-    xkb = {
-      variant = "";
-      layout = "us";
+
+    services.displayManager = { 
+        sddm = {
+            enable = true;
+# enable experimental support to wayland in sddm
+            wayland = {
+                enable = true;
+            };
+            theme = "${import ./sddm-theme.nix { inherit pkgs; }}";
+        };
     };
-  };
 
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
-  };
-
-  hardware = {
-    opengl.enable = true;
-    nvidia = {
-      modesetting.enable = true;
-      open = false;
-      nvidiaSettings = true;
-      package = config.boot.kernelPackages.nvidiaPackages.stable;
-      forceFullCompositionPipeline = true;
-      powerManagement.enable = true;
+    services.xserver = {
+        enable = true;
+        videoDrivers = ["nvidia"];
+        xkb = {
+            variant = "";
+            layout = "us";
+        };
     };
-  };
-  
-  services.displayManager.sddm.theme = "${import ./sddm-theme.nix { inherit pkgs; }}";
 
-  environment.variables = {
-    WLR_NO_HARDWARE_CURSORS = "1";
-    WLR_RENDERER_ALLOW_SOFTWARE = "1";
-    NIXOS_OZONE_WL = "1";
-    XCURSOR_SIZE = "30";
-    XCURSOR_THEME = "Catppuccin-Macchiato-Blue-Cursors";
-  };
-  
-  programs.hyprland.enable = true;
+# fix some buggy things for hyprland to work properly
+    environment.variables = {
+        WLR_NO_HARDWARE_CURSORS = "1";
+        WLR_RENDERER_ALLOW_SOFTWARE = "1";
+# Use ozone wayland in electron apps, like Chrome
+        NIXOS_OZONE_WL = "1";
+        XCURSOR_SIZE = "30";
+        XCURSOR_THEME = "Catppuccin-Macchiato-Blue-Cursors";
+    };
 
-  programs.waybar.enable = true;
-  programs.waybar.package = pkgs.waybar;
+    programs.hyprland.enable = true;
+    programs.hyprland.xwayland.enable = true;
 
-  xdg.portal.enable = true;
-  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    programs.waybar.enable = true;
+    programs.waybar.package = pkgs.waybar;
 
-  environment.systemPackages = [
-    (pkgs.waybar.overrideAttrs (oldAttrs: {
-        mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
-      })
-    )
-  ];
-  
-  fonts.packages = with pkgs; [
-     font-awesome
-     inter
-     (nerdfonts.override { fonts = [ "Meslo" "FantasqueSansMono" ]; })
-   ];
+    xdg.portal.enable = true;
+    xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+
+    environment.systemPackages = [
+        (pkgs.waybar.overrideAttrs (oldAttrs: {
+                                    mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ];
+                                    })
+        )
+    ];
+
+    fonts.packages = with pkgs; [
+        font-awesome
+            inter
+            (nerdfonts.override { fonts = [ "Meslo" "FantasqueSansMono" ]; })
+    ];
+
+# workaround to make login not crash when typing password too fast
+# see: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
+    systemd.services."getty@tty1".enable = false;
+    systemd.services."autovt@tty1".enable = false;
 }

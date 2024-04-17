@@ -13,7 +13,7 @@ in {
     enable = true;
     extraConfig = ''
       monitor=,highrr,auto,1
-      monitor=Unknown-1,disable
+      monitor=Unknown-1,disabled
 
       $mainMod = 'Alt'
 
@@ -43,6 +43,10 @@ in {
       bind = $mainMod SHIFT, 8, movetoworkspace, 8
       bind = $mainMod SHIFT, 9, movetoworkspace, 9
       bind = $mainMod SHIFT, 0, movetoworkspace, 10
+      bind = $mainMod, V, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
+
+      exec-once = wl-paste --type text --watch cliphist store #Stores only text data
+      exec-once = wl-paste --type image --watch cliphist store #Stores only image data
     '';
   };
 

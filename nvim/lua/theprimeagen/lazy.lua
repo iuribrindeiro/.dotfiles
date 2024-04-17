@@ -36,5 +36,26 @@ require("lazy").setup({
 {'hrsh7th/nvim-cmp'},
 {'L3MON4D3/LuaSnip'},
 
-"rebelot/kanagawa.nvim"
+"rebelot/kanagawa.nvim",
+
+{
+    "lambdalisue/suda.vim", init = function () 
+        vim.g.suda_smart_edit = 1
+    end
+},
+
+{
+  "folke/which-key.nvim",
+  event = "VeryLazy",
+  init = function()
+    vim.o.timeout = true
+    vim.o.timeoutlen = 300
+  end,
+  opts = {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+}
+
 })

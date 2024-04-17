@@ -24,5 +24,14 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  home.packages = [
+    pkgs.whatsapp-for-linux
+    pkgs.nodejs_21
+    pkgs.cliphist
+    pkgs.rofi-wayland
+    pkgs.wl-clip-persist
+    pkgs.wl-clipboard
+  ];
 }
 
